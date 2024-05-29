@@ -1,0 +1,4 @@
+rootProject.name = 'tdlib-client'
+include('app')
+
+
