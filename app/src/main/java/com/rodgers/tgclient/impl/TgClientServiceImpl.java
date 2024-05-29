@@ -1,9 +1,12 @@
 package com.rodgers.tgclient.impl;
 
+import com.rodgers.service.impl.CommandHandlerImpl;
 import com.rodgers.tdlib.Client;
 import com.rodgers.tdlib.TdApi;
+import com.rodgers.tgclient.CommandResultService;
+import com.rodgers.tgclient.ExceptionResultService;
 import com.rodgers.tgclient.TgClientService;
-import com.rodgers.tgclient.handler.UpdateHandlerImpl;
+import com.rodgers.tgclient.UpdateResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOError;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,31 +26,36 @@ public class TgClientServiceImpl implements TgClientService {
     Client client=null;
     @Autowired
     Environment environment;
+    @Autowired
+    UpdateResultService updateResultService;
     @Override
-    public CompletableFuture<TdApi.UpdateAuthorizationState> start() {
+    public void start() {
         if(client==null){
             setUpTgClient(Integer.parseInt(Optional.ofNullable(environment.getProperty("rodgers.tdlib.loglevel")).orElse("0")));
-            Client.ResultHandler resultHandler=new UpdateHandlerImpl(currentQueryId.incrementAndGet());
-            client=Client.create(resultHandler,null,null);
-        }
-        else{
-            return CompletableFuture.completedFuture(new TdApi.UpdateAuthorizationState(new TdApi.AuthorizationStateReady()));
+            client=Client.create(updateResultService,null,null);
         }
     }
 
-    @Override
-    public <T extends TdApi.UpdateAuthorizationState, F extends TdApi.Object> CompletableFuture<T> sentAuthorizationState(TdApi.Function<F> authorization) {
-        return null;
-    }
 
     @Override
-    public <T extends TdApi.UpdateAuthorizationState> CompletableFuture<T> close() {
-        return null;
+    public <T extends TdApi.Object> CompletableFuture<T> close() {
+         return sent(new TdApi.Close());
     }
-
     @Override
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query) {
-        return null;
+        CommandResultService commandResultService=new CommandHandlerImpl<>();
+        client.send(query, commandResultService );
+        return commandResultService.getCompletableFuture();
+    }
+
+    @Override
+    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> send(TdApi.Function<F> query, CommandResultService commandResultService) {
+        client.send(query,commandResultService);
+        return commandResultService.getCompletableFuture();
+    }
+    @Override
+    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> send(TdApi.Function<F> query, CommandResultService commandResultService, ExceptionResultService exceptionResultService) {
+
     }
 
     private void setUpTgClient(int tgServerLogLevel){
