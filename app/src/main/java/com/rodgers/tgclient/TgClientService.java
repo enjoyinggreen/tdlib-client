@@ -9,8 +9,8 @@ public interface TgClientService {
     public void start();
     public <T extends TdApi.Object> CompletableFuture<T>  close();
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query );
-    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> send(TdApi.Function<F> query,CommandResultService commandResultService);
-    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> send(TdApi.Function<F> query, CommandResultService commandResultService, ExceptionResultService exceptionResultService);
+    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query,CommandResultService commandResultService);
+
 
 
 }

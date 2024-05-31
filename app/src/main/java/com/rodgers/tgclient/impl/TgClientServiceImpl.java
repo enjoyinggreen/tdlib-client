@@ -49,15 +49,10 @@ public class TgClientServiceImpl implements TgClientService {
     }
 
     @Override
-    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> send(TdApi.Function<F> query, CommandResultService commandResultService) {
+    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query, CommandResultService commandResultService) {
         client.send(query,commandResultService);
         return commandResultService.getCompletableFuture();
     }
-    @Override
-    public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> send(TdApi.Function<F> query, CommandResultService commandResultService, ExceptionResultService exceptionResultService) {
-
-    }
-
     private void setUpTgClient(int tgServerLogLevel){
         Client.setLogMessageHandler(0, new LogMessageHandler());
 
