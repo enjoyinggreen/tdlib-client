@@ -43,7 +43,7 @@ public class AuthorizationHandlerImpl implements AuthorizationService {
     }
 
     public <T extends TdApi.Object,U extends TdApi.Function> CompletableFuture<T> sentAuthorizationCommand(U authorizationQuery) {
-        return tgClientService.sent(authorizationQuery,commandResultService);
+        return tgClientService.sent(authorizationQuery,updateResultService);
         /*
         switch (AuthorizationHandlerImpl.authorizationState.getConstructor()) {
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR:

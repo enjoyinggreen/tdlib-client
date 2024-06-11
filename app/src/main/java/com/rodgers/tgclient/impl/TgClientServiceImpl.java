@@ -43,7 +43,7 @@ public class TgClientServiceImpl implements TgClientService {
     }
     @Override
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query) {
-        CommandResultService commandResultService=new CommandHandlerImpl<>();
+        CommandResultService commandResultService=CommandHandlerImpl.builder().command(query).build();
         client.send(query, commandResultService );
         return commandResultService.getCompletableFuture();
     }

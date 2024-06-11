@@ -4,8 +4,10 @@ import com.rodgers.tdlib.TdApi;
 import com.rodgers.tgclient.CommandResultService;
 import com.rodgers.utils.TgConstants;
 import com.rodgers.service.TgMessageLogger;
+import lombok.Builder;
 
 import java.util.concurrent.CompletableFuture;
+@Builder
 
 public class CommandHandlerImpl <T extends  TdApi.Object>implements CommandResultService {
     protected CompletableFuture<T> completableFuture=new CompletableFuture<>();
