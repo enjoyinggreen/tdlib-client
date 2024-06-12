@@ -1,19 +1,18 @@
-package com.rodgers.service.impl;
+package com.rodgers.tgclient.impl;
 
 import com.rodgers.service.AuthorizationService;
 import com.rodgers.tdlib.TdApi;
 import com.rodgers.tgclient.UpdateResultService;
-import com.rodgers.service.TgMessageLogger;
+import com.rodgers.service.TgMessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UpdateHandlerImpl implements UpdateResultService {
+public class UpdateResultServiceImpl implements UpdateResultService {
     @Autowired
-    TgMessageLogger tgMessageLogger;
+    TgMessageProcessor tgMessageProcessor;
     @Autowired
     AuthorizationService authorizationService;
-
     @Override
     public void onResult(TdApi.Object object) {
         switch (object.getConstructor()) {
@@ -21,7 +20,7 @@ public class UpdateHandlerImpl implements UpdateResultService {
                 authorizationService.updateAuthorizationState(((TdApi.UpdateAuthorizationState) object).authorizationState);
                 break;
             default:
-                tgMessageLogger.printUpdateMessage(object);
+                tgMessageProcessor.processTgObject(object);
                 // print("Unsupported update:" + newLine + object);
         }
     }

@@ -10,7 +10,4 @@ public interface TgClientService {
     public <T extends TdApi.Object> CompletableFuture<T>  close();
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query );
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query,CommandResultService commandResultService);
-
-
-
 }

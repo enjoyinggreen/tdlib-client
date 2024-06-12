@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class FileLoggerConfig {
     @Bean(name = "updateMessageLogger")
     Logger getUpdateMessageLogger(){
-        return LoggerFactory.getLogger("UpdateMessageLogFile");
+        return LoggerFactory.getLogger("updateMessageLogFile");
     }
     @Bean(name = "commandMessageLogger")
     Logger getCommandMessageLogger(){

@@ -1,12 +1,17 @@
-package com.rodgers.tgclient.impl;
+package com.rodgers.service.impl;
 
-import com.rodgers.service.impl.CommandHandlerImpl;
+import com.rodgers.service.TgMessageProcessor;
+import com.rodgers.service.AuthorizationService;
 import com.rodgers.tdlib.Client;
 import com.rodgers.tdlib.TdApi;
+import com.rodgers.tdlib.TdApi.AuthorizationState;
+import com.rodgers.tdlib.TdApi.Object;
 import com.rodgers.tgclient.CommandResultService;
 import com.rodgers.tgclient.ExceptionResultService;
 import com.rodgers.tgclient.TgClientService;
 import com.rodgers.tgclient.UpdateResultService;
+
+import com.rodgers.tgclient.impl.CommandResultServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,10 @@ public class TgClientServiceImpl implements TgClientService {
     Environment environment;
     @Autowired
     UpdateResultService updateResultService;
+    @Autowired
+    TgMessageProcessor tgMessageProcessor;
+    @Autowired
+    AuthorizationService authorizationService;
     @Override
     public void start() {
         if(client==null){
@@ -35,19 +44,16 @@ public class TgClientServiceImpl implements TgClientService {
             client=Client.create(updateResultService,null,null);
         }
     }
-
-
     @Override
     public <T extends TdApi.Object> CompletableFuture<T> close() {
          return sent(new TdApi.Close());
     }
     @Override
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query) {
-        CommandResultService commandResultService=CommandHandlerImpl.builder().command(query).build();
+        CommandResultService commandResultService= CommandResultServiceImpl.builder().command(query).tgMessageProcessor(tgMessageProcessor).build();
         client.send(query, commandResultService );
         return commandResultService.getCompletableFuture();
     }
-
     @Override
     public <T extends TdApi.Object, F extends TdApi.Object> CompletableFuture<T> sent(TdApi.Function<F> query, CommandResultService commandResultService) {
         client.send(query,commandResultService);
@@ -146,4 +152,7 @@ public class TgClientServiceImpl implements TgClientService {
             }
         }
     }
+
+
+    
 }

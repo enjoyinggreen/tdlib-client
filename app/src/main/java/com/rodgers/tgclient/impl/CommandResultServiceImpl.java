@@ -1,20 +1,30 @@
-package com.rodgers.service.impl;
+package com.rodgers.tgclient.impl;
 
 import com.rodgers.tdlib.TdApi;
 import com.rodgers.tgclient.CommandResultService;
 import com.rodgers.utils.TgConstants;
-import com.rodgers.service.TgMessageLogger;
+import com.rodgers.service.TgMessageProcessor;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.concurrent.CompletableFuture;
-@Builder
 
-public class CommandHandlerImpl <T extends  TdApi.Object>implements CommandResultService {
-    protected CompletableFuture<T> completableFuture=new CompletableFuture<>();
-    protected TgMessageLogger tgMessageLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@SuperBuilder
+public class CommandResultServiceImpl <T extends  TdApi.Object>implements CommandResultService {
+    protected final CompletableFuture<T> completableFuture=new CompletableFuture<>();
+    protected TgMessageProcessor tgMessageProcessor;
     protected TdApi.Function command;
     @Override
     public void onResult(TdApi.Object object) {
+
         try {
             processResult(object);
             completableFuture.complete((T)object);
@@ -29,6 +39,6 @@ public class CommandHandlerImpl <T extends  TdApi.Object>implements CommandResul
         return (CompletableFuture<T>) this.completableFuture;
     }
     protected void processResult(TdApi.Object object){
-        tgMessageLogger.printCommandMessage("got result form command:",this.command,object);
+        tgMessageProcessor.processTgCommandObject("got result form command:",this.command,object);
     }
 }

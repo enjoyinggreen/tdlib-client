@@ -57,3 +57,5 @@ out/
 
 ### VS Code ###
 .vscode/
+.java-version
+.DS_Store
