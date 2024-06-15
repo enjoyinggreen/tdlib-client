@@ -4,15 +4,17 @@ import com.rodgers.service.AuthorizationService;
 import com.rodgers.tdlib.TdApi;
 import com.rodgers.tgclient.UpdateResultService;
 import com.rodgers.service.TgMessageProcessor;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class UpdateResultServiceImpl implements UpdateResultService {
-    @Autowired
-    TgMessageProcessor tgMessageProcessor;
-    @Autowired
-    AuthorizationService authorizationService;
+import java.util.concurrent.CompletableFuture;
+
+@Builder
+public class UpdateResultServiceImpl <T extends  TdApi.Object> implements UpdateResultService {
+    protected final CompletableFuture<T> completableFuture=new CompletableFuture<>();
+    protected TgMessageProcessor tgMessageProcessor;
+    protected AuthorizationService authorizationService;
     @Override
     public void onResult(TdApi.Object object) {
         switch (object.getConstructor()) {
@@ -21,8 +23,6 @@ public class UpdateResultServiceImpl implements UpdateResultService {
                 break;
             default:
                 tgMessageProcessor.processTgObject(object);
-                // print("Unsupported update:" + newLine + object);
         }
     }
-    //distribute updating message base on message type
 }

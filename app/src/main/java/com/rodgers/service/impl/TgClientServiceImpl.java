@@ -2,15 +2,14 @@ package com.rodgers.service.impl;
 
 import com.rodgers.service.TgMessageProcessor;
 import com.rodgers.service.AuthorizationService;
+import com.rodgers.service.UpdateService;
 import com.rodgers.tdlib.Client;
 import com.rodgers.tdlib.TdApi;
 import com.rodgers.tdlib.TdApi.AuthorizationState;
 import com.rodgers.tdlib.TdApi.Object;
-import com.rodgers.tgclient.CommandResultService;
-import com.rodgers.tgclient.ExceptionResultService;
-import com.rodgers.tgclient.TgClientService;
-import com.rodgers.tgclient.UpdateResultService;
+import com.rodgers.tgclient.*;
 
+import com.rodgers.tgclient.TgClientService;
 import com.rodgers.tgclient.impl.CommandResultServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,16 +31,20 @@ public class TgClientServiceImpl implements TgClientService {
     @Autowired
     Environment environment;
     @Autowired
-    UpdateResultService updateResultService;
+    UpdateService updateService;
     @Autowired
     TgMessageProcessor tgMessageProcessor;
     @Autowired
     AuthorizationService authorizationService;
+    @Autowired
+    LogMessageService logMessageService;
+    @Autowired
+    ExceptionResultService exceptionResultService;
     @Override
     public void start() {
         if(client==null){
             setUpTgClient(Integer.parseInt(Optional.ofNullable(environment.getProperty("rodgers.tdlib.loglevel")).orElse("0")));
-            client=Client.create(updateResultService,null,null);
+            client=Client.create(updateService.getUpdateResultService(),exceptionResultService,exceptionResultService);
         }
     }
     @Override
@@ -60,7 +63,7 @@ public class TgClientServiceImpl implements TgClientService {
         return commandResultService.getCompletableFuture();
     }
     private void setUpTgClient(int tgServerLogLevel){
-        Client.setLogMessageHandler(0, new LogMessageHandler());
+        Client.setLogMessageHandler(0, logMessageService);
 
         // disable TDLib log and redirect fatal errors and plain log messages to a file
         try {
@@ -70,17 +73,6 @@ public class TgClientServiceImpl implements TgClientService {
             throw new IOError(new IOException("Write access to the current directory is required"));
         }
 
-    }
-    private static class LogMessageHandler implements Client.LogMessageHandler {
-        @Override
-        public void onLogMessage(int verbosityLevel, String message) {
-            logger.error(message);
-            if (verbosityLevel == 0) {
-                onFatalError(message);
-                return;
-            }
-
-        }
     }
     //todo: rewrite with spring executor
     private static void onFatalError(String errorMessage) {
