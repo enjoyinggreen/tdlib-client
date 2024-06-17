@@ -1,5 +1,5 @@
 #!/bin/sh
-
+#sudo apt update
 #sudo apt-get install -y curl wget git openjdk-21-jdk zlib1g zlib1g-dev \
       #    gcc  make cmake openssl gperf php libssl-dev \
       #    libavformat60 libgl1-mesa-dev libx11-dev pkg-config x11proto-core-dev git libgtk2.0-dev libgtk-3-dev  libxxf86vm-dev \

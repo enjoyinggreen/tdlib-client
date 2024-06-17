@@ -40,3 +40,13 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+/*
+application {
+    mainClassName='com.rodgers.TgClientApp'
+}
+
+ */
+bootRun {
+    systemProperty "spring.config.location", "file:${System.getenv("HOME")}/springboot/tdlib-client/"
+    systemProperty "logging.config", "file:${System.getenv("HOME")}/springboot/tdlib-client/logback-spring.xml"
+}

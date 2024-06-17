@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>%date{dd MMM yyyy ;HH:mm:ss.SSS,America/New_York} %-5level[%thread] %logger{0} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="DETAILS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${HOME}/logs/details.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs\details.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 100MB -->
+                <maxFileSize>50MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date{yyyy-MM-dd HH:mm:ssZZZZ} - [%level] - [%thread] %logger{1} - %msg%n</pattern>
+        </encoder>
+    </appender>
+     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+       <queueSize>1000000</queueSize>
+       <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="DETAILS" />
+    </appender>
+    <logger name="com.rodgers" level="DEBUG" additivity="false">
+            <appender-ref ref="DETAILS" />
+    </logger>
+    <logger name="org.springframework" level="DEBUG" additivity="false">
+        <appender-ref ref="DETAILS" />
+    </logger>
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DETAILS"/>
+    </root>
+</configuration>

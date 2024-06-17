@@ -11,6 +11,8 @@ import com.rodgers.tgclient.*;
 
 import com.rodgers.tgclient.TgClientService;
 import com.rodgers.tgclient.impl.CommandResultServiceImpl;
+import lombok.Builder;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +25,22 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Service
+@Builder
+@Data
 public class TgClientServiceImpl implements TgClientService {
     static private final Logger logger= LoggerFactory.getLogger(TgClientServiceImpl.class);
     private static final AtomicLong currentQueryId = new AtomicLong();
+    @Builder.Default
     Client client=null;
-    @Autowired
+
     Environment environment;
-    @Autowired
+
     UpdateService updateService;
-    @Autowired
+
     TgMessageProcessor tgMessageProcessor;
-    @Autowired
-    AuthorizationService authorizationService;
-    @Autowired
+
     LogMessageService logMessageService;
-    @Autowired
+
     ExceptionResultService exceptionResultService;
     @Override
     public void start() {

@@ -1,0 +1,9 @@
+rodgers:
+  tdlib:
+    loglevel: 5
+  tg-manager:
+    ui:
+      width: 1600
+      height: 900
+server:
+  port: 8081

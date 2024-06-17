@@ -10,6 +10,7 @@ import com.rodgers.tgclient.CommandResultService;
 import com.rodgers.tgclient.TgClientService;
 import com.rodgers.tgclient.UpdateResultService;
 import com.rodgers.tgclient.impl.AuthorizationResultServiceImpl;
+import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +23,15 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Service
+@Builder
 public class AuthorizationServiceImpl implements AuthorizationService {
     private static Logger logger= LoggerFactory.getLogger(AuthorizationServiceImpl.class);
     private static TdApi.AuthorizationState authorizationState = null;
-    @Autowired
-    Environment environment;
-    @Autowired
-    TgClientService tgClientService;
-    @Autowired
-    UpdateResultService updateResultService;
 
-    @Autowired
+    Environment environment;
+
+    TgClientService tgClientService;
+
     TgMessageProcessor tgMessageProcessor;
     private static volatile boolean haveAuthorization = false;
     private static final Lock authorizationLock = new ReentrantLock();
