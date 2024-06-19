@@ -43,14 +43,14 @@ public class TgClientServiceImpl implements TgClientService {
 
     ExceptionResultService exceptionResultService;
     @Override
-    public void start() {
+    public void startClient() {
         if(client==null){
             setUpTgClient(Integer.parseInt(Optional.ofNullable(environment.getProperty("rodgers.tdlib.loglevel")).orElse("0")));
             client=Client.create(updateService.getUpdateResultService(),exceptionResultService,exceptionResultService);
         }
     }
     @Override
-    public <T extends TdApi.Object> CompletableFuture<T> close() {
+    public <T extends TdApi.Object> CompletableFuture<T> closeClient() {
          return sent(new TdApi.Close());
     }
     @Override
